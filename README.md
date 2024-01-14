@@ -94,10 +94,10 @@ Debería ver los siguientes tópicos publicados:
 <p style="margin-top:10px; font-size: 16px;"><strong>Figura 1.</strong> Lectura de datos de LiDAR.</p>
 <br>
 <img src="https://github.com/Hamed-Quenta/sparkle/blob/main/images/oak-rgb.png" alt="RGB">
-<p style="margin-top:10px; font-size: 16px;"><strong>Figura 1.</strong> Lectura de datos de cámara RGB.</p>
+<p style="margin-top:10px; font-size: 16px;"><strong>Figura 2.</strong> Lectura de datos de cámara RGB.</p>
 <br>
 <img src="https://github.com/Hamed-Quenta/sparkle/blob/main/images/oak-depth.png" alt="Depth">
-<p style="margin-top:10px; font-size: 16px;"><strong>Figura 1.</strong> Lectura de datos de cámara de profundidad.</p>
+<p style="margin-top:10px; font-size: 16px;"><strong>Figura 3.</strong> Lectura de datos de cámara de profundidad.</p>
 <br>
 
 ## Ejercicio 1: Teleoperación
