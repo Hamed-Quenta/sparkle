@@ -1,4 +1,4 @@
-# Plataforma educativa para la implementación de algoritmos de robótica móivl en entornos reales y simulados
+# Plataforma educativa para la implementación de algoritmos de robótica móvil en entornos reales y simulados
 ## Configuración del espacio de trabajo de la plataforma
 Para poder trabajar correctamente con el presente repositorio es necesario configurar un espacio de trabajo en la computadora del robot. Es necesario clonar este repositorio en tu máquina local. Sigue los pasos detallados a continuación para configurar de forma correcta al robot y a tu máquina local.
 
@@ -65,8 +65,8 @@ En este caso es recomendable instalar desde el [repositorio de Luxonis](https://
 ### Creación del workspace
 Debe abrir una terminal y ejecutar los siguientes comandos para crear el workspace del robot:
 ```bash
-mkdir -p sparkle_ws/src
-cd sparkle_ws/src
+mkdir -p ~/sparkle_ws/src
+cd ~/sparkle_ws/src
 git clone https://github.com/Hamed-Quenta/sparkle.git
 cd ..
 colcon build
@@ -80,7 +80,7 @@ ros2 launch sparkle_bringup robot.launch.py
 ```
 
 Debería ver los siguientes tópicos publicados:
-1. `/left_ticks` y `/right_ticks`: Contiene datos de conteo de los encoders de las ruedas izquierda y derecha, respectivamente. 
+1. `/left_ticks` y `/right_ticks`: Contienen datos de conteo de los encoders de las ruedas izquierda y derecha, respectivamente. 
 2. `/cmd_vel`: Contiene las velocidades lineales y angulares de entrada del robot.
 3. `/odom_data_quat` y `/odom_data_euler`: Contienen los datos de odometría de rueda con la orientación expresada en cuaterniones y ángulos de euler, respectivamente.
 4. `/scan`: Contiene las lecturas del sensor LiDAR publicadas a una frecuencia de 5.5Hz.
@@ -88,3 +88,66 @@ Debería ver los siguientes tópicos publicados:
 6. `/oak/rgb/image_raw`: Contiene imágenes de la cámara RGB de la cámara OAK-D.
 7. `/oak/depth/image_raw`: Contiene imágenes de la cámara de profundidad de la cámara OAK-D.
 8. `/tf`: Contiene las transformaciones de posición y orientación entre todos los links del robot.
+
+## Visualización de datos
+<img src="https://github.com/Hamed-Quenta/sparkle/blob/main/images/laser-screen.png" alt="Laser">
+<p style="margin-top:10px; font-size: 16px;"><strong>Figura 1.</strong> Lectura de datos de LiDAR.</p>
+<br>
+<img src="https://github.com/Hamed-Quenta/sparkle/blob/main/images/oak-rgb.png" alt="RGB">
+<p style="margin-top:10px; font-size: 16px;"><strong>Figura 1.</strong> Lectura de datos de cámara RGB.</p>
+<br>
+<img src="https://github.com/Hamed-Quenta/sparkle/blob/main/images/oak-depth.png" alt="Depth">
+<p style="margin-top:10px; font-size: 16px;"><strong>Figura 1.</strong> Lectura de datos de cámara de profundidad.</p>
+<br>
+
+## Ejercicio 1: Teleoperación
+Este ejercicio consiste en escribir un nodo publicador que publique datos de velocidad lineal en `x` y velocidad angular en `z` al tópico `/cmd_vel`.
+Debe lanzar `sparkle_bringup` desde la terminal del robot para correr todos los controladores.
+
+Desde la máquina local debe abrir 2 terminales de comando:
+
+### Terminal 1:
+```bash
+ros2 run joy joy_node
+```
+
+### Terminal 2:
+```bash
+cd ~/sparkle_ws
+source install/setup.bash
+ros2 run ds_controller dualsense_controller
+```
+
+Ahora al mover los joysticks del mando el robot debe ser capaz de moverse.
+
+## Ejercicio 2: Fusion de sensores
+Para realizar este ejercicio es necesario instalar el paquete `robot_localization` desde la fuente:
+```bash
+cd ~/sparkle_ws/src
+git clone https://github.com/cra-ros-pkg/robot_localization.git -b ros2
+```
+Al descargar este paquete debe editar los parámetros en el archivo de configuración:
+```bash
+cd ~/sparkle_ws/
+nano src/robot_localization/params/ekf.yaml
+```
+Debe modificar los parámetros de `odom0` y `imu0` para que concuerden con el nombre de los tópicos publicados por el robot.
+```yaml
+...
+
+odom0: odom_data_quat
+
+...
+
+imu0: bno055/imu
+
+...
+```
+Una vez modificados los parámetros de entrada se debe compilar el paquete
+```bash
+cd ~/sparkle_ws/
+colcon build --packages-select robot_localization
+source install/setup.bash
+ros2 launch robot_localization ekf.launch.py
+```
+Este debería publicar el tópico `/odometry/filtered` que contiene una representación de la odometría obtenida al fusionar los datos de odometría de rueda con los datos de orientación de la unidad de medición inercial. Asimismo, puede inicializar la herramienta RViZ desde la máquina local mediante el comando `rviz2` para visualizar las transformadas en tiempo real.
