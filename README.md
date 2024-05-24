@@ -85,9 +85,8 @@ Debería ver los siguientes tópicos publicados:
 3. `/odom_data_quat` y `/odom_data_euler`: Contienen los datos de odometría de rueda con la orientación expresada en cuaterniones y ángulos de euler, respectivamente.
 4. `/scan`: Contiene las lecturas del sensor LiDAR publicadas a una frecuencia de 5.5Hz.
 5. `/bno055/imu`: Contiene las lecturas de aceleración y orientación del sensor BNO055.
-6. `/oak/rgb/image_raw`: Contiene imágenes de la cámara RGB de la cámara OAK-D.
-7. `/oak/depth/image_raw`: Contiene imágenes de la cámara de profundidad de la cámara OAK-D.
-8. `/tf`: Contiene las transformaciones de posición y orientación entre todos los links del robot.
+6. `/oak/rgb/image_raw`: Contiene imágenes de la cámara RGB.
+7. `/tf`: Contiene las transformaciones de posición y orientación entre todos los links del robot.
 
 ## Visualización de datos
 <img src="https://github.com/Hamed-Quenta/sparkle/blob/main/images/laser-screen.png" alt="Laser">
