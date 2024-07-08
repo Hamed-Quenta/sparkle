@@ -55,12 +55,12 @@ Para ejecutar el nodo correspondiente debe asegurarse que el sensor esté conect
 ros2 run bno055 bno055 --ros-args --params-file ./src/bno055/bno055/params/bno055_i2c_params.yaml
 ```
 
-#### Depthai-ROS
-Esto es necesario para publicar datos de imagen usando la cámara Luxonis OAK-D del robot. Es posible instalar esta dependencia usando `apt-get`:
+#### Cartographer
+Esto es necesario para ejecutar correctamente el ejercicio de mapeo. Es posible instalar esta dependencia usando `apt-get`:
 ```bash
-sudo apt-get install ros-humble-depthai-ros
+sudo apt-get install ros-humble-cartographer
 ```
-En este caso es recomendable instalar desde el [repositorio de Luxonis](https://github.com/luxonis/depthai-ros/tree/humble).
+En este caso es recomendable instalar desde el [repositorio oficial](https://github.com/ros2/cartographer_ros.git).
 
 ### Creación del workspace
 Debe abrir una terminal y ejecutar los siguientes comandos para crear el workspace del robot:
@@ -147,3 +147,35 @@ source install/setup.bash
 ros2 launch robot_localization ekf.launch.py
 ```
 Este debería publicar el tópico `/odometry/filtered` que contiene una representación de la odometría obtenida al fusionar los datos de odometría de rueda con los datos de orientación de la unidad de medición inercial. Asimismo, puede inicializar la herramienta RViZ desde la máquina local mediante el comando `rviz2` para visualizar las transformadas en tiempo real.
+
+## Ejercicio 3: Mapeo
+Para realizar este ejercicio debe lanzar `sparkle_bringup` desde la terminal del robot para correr todos los controladores.
+
+Adicionalmente debe iniciar 2 terminales de comando:
+
+### Terminal 1:
+```bash
+ros2 run cartographer_ros cartographer_occupancy_grid_node -resolution 0.05 -publish_period_sec 1.0
+```
+
+### Terminal 2:
+```bash
+ros2 run cartographer_ros cartographer_node -configuration_directory /path/to/conf -configuration_basename try.lua
+```
+
+en donde `/path/to/conf` es la ubicación del archivo de configuración del paquete.
+
+A continuación debe realizar el ejercicio de teleoperación en otra terminal para que el robot debe ser capaz de moverse y debe ejecutar RViz mediante el comando `rviz2`.
+
+Si realizó el procedimiento de forma correcta debería observar el progreso de mapeo del robot como se muestra a continuación:
+<img src="https://github.com/Hamed-Quenta/sparkle/blob/main/images/map.png" alt="RGB">
+<p style="margin-top:10px; font-size: 16px;"><strong>Figura 2.</strong> Visualización durante la creación del mapa.</p>
+<br>
+
+Una vez obtenido el mapa deseado se debe ejecutar el siguiente comando en una nueva terminal para guardar el mapa:
+```bash
+ros2 run nav2_map_server map_saver_cli -f my_map
+```
+
+Donde `my_map` es el nombre asignado al mapa guardado.
+
