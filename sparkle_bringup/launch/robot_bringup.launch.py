@@ -46,11 +46,6 @@ def generate_launch_description():
             executable='static_transform_publisher',
             arguments = ['0', '0', '0.3224', '0', '0', '0', 'base_link', 'laser']
         ),
-        # Node(
-        #     package='tf2_ros',
-        #     executable='static_transform_publisher',
-        #     arguments = ['0.08166', '0', '0.2316', '0', '0', '0', 'base_link', 'oak']
-        # ),
         Node(
             package='rplidar_ros',
             executable='rplidar_node',
@@ -62,15 +57,4 @@ def generate_launch_description():
                          'inverted': False,
                          'angle_compensate': True}],
             output='screen'),
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(get_package_share_directory('depthai_ros_driver'), 'launch', 'pointcloud.launch.py')),
-            launch_arguments={'name': 'oak',
-                            'parent_frame': 'base_link',
-                            'cam_pos_x': '0.08166',
-                            'cam_pos_y': '0',
-                            'cam_pos_z': '0.2316',
-                            'cam_roll': '0',
-                            'cam_pitch': '0',
-                            'cam_yaw': '0',
-                            'params_file': os.path.join(get_package_share_directory('sparkle_bringup'), 'config', 'camera.yaml')}.items()),
     ])
