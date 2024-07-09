@@ -5,12 +5,10 @@ from geometry_msgs.msg import Twist
 from std_msgs.msg import Int16, Float64
 import Jetson.GPIO as GPIO
 import datetime
-import csv
-# import numpy as np
 import time
 
 WHEEL_DIAMETER = 0.1
-WHEEL_BASE = 0.21
+WHEEL_BASE = 0.281
 
 # Timestamp funtion
 def TimestampMilisec64():
@@ -20,13 +18,8 @@ class MotorController(Node):
     def __init__(self):
         super().__init__('motor_controller')
         GPIO.setmode(GPIO.BOARD)
-        self.speeds_left = []
-        self.speeds_right = []
-        self.setpoints_left = []
-        self.setpoints_right = []
 
         # Left motor connections
-
         self.left_motor_in1 = 22  # GPIO pin for left motor direction
         self.left_motor_in2 = 21
         self.left_motor_en_pin = 15  # GPIO pin for left motor EN
@@ -60,23 +53,13 @@ class MotorController(Node):
         self.speed_left = 0
         self.speed_right = 0
 
-        self.kp_left = 71.8
-        self.ki_left = 1004.0
-        self.kd_left = 0.04554
+        self.kp_left = 50.0
+        self.ki_left = 10.0
+        self.kd_left = 0.45
 
-        self.kp_right = 51.79
-        # self.ki_right = 491.6
-        self.ki_right = 491.6
-        self.kd_right = 0.1
-        # self.kd_right = 0.04839
-
-        # self.kp_left = 400.8
-        # self.ki_left = 0.0
-        # self.kd_left = 0.0
-
-        # self.kp_right = 400.79
-        # self.ki_right = 0.0
-        # self.kd_right = 0.0
+        self.kp_right = 55.0
+        self.ki_right = 9.0
+        self.kd_right = 0.21
 
         self.cumulative_error_left = 0
         self.cumulative_error_right = 0
@@ -270,11 +253,6 @@ class MotorController(Node):
         right_setpoint_msg = Float64()
         right_setpoint_msg.data = float(self.setpoint_right)
 
-        self.speeds_left.append(self.speed_left)
-        self.speeds_right.append(self.speed_right)
-        self.setpoints_left.append(self.setpoint_left)
-        self.setpoints_right.append(self.setpoint_right)
-
         # msg = Twist()
         # msg.linear.x = float(self.speed_left)
         # msg.linear.y = self.setpoint_left
@@ -291,18 +269,6 @@ class MotorController(Node):
         # self.speed_publisher_.publish(msg)
 
     def on_shutdown(self):
-        with open ('/home/jetson/Documents/speeds_left.csv', 'w') as f:
-            writer = csv.writer(f)
-            writer.writerow(self.speeds_left)
-        with open ('/home/jetson/Documents/speeds_right.csv', 'w') as f1:
-            writer1 = csv.writer(f1)
-            writer1.writerow(self.speeds_right)
-        with open ('/home/jetson/Documents/setpoints_left.csv', 'w') as f2:
-            writer2 = csv.writer(f2)
-            writer2.writerow(self.setpoints_left)
-        with open ('/home/jetson/Documents/setpoints_right.csv', 'w') as f3:
-            writer3 = csv.writer(f3)
-            writer3.writerow(self.setpoints_right)
         self.left_motor_pwm.stop()
         self.right_motor_pwm.stop()
         self.get_logger().info('Shutting down motor controller node')
